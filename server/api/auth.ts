@@ -1,6 +1,6 @@
 import { hash } from "https://deno.land/x/bcrypt/mod.ts";
-import { RouterContext } from "../../deps.ts";
-import { MongoClient } from "https://deno.land/x/mongo@v0.31.1/mod.ts"; // Import MongoClient
+import { MongoClient,} from "https://deno.land/x/mongo@v0.31.1/mod.ts";
+import { RouterContext } from "https://deno.land/x/oak@v11.1.0/mod.ts";
 import { Resident } from "../models/residentModel.ts"; // Asegúrate de importar el modelo actualizado
 
 // Conexión a MongoDB

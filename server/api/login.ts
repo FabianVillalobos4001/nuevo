@@ -1,8 +1,8 @@
 import { RouterContext } from "../../deps.ts";
 import { Usuario } from "../models/userModel.ts";
-import { MongoClient } from "../../deps.ts";
 import { compare } from "https://deno.land/x/bcrypt@v0.3.0/mod.ts";
 import { create, getNumericDate } from "https://deno.land/x/djwt@v2.6/mod.ts";
+import db from "../config/db.ts"; // ✅ conexión centralizada
 
 const JWT_SECRET = Deno.env.get("JWT_SECRET") || "clave_super_secreta";
 const keyBuf = new TextEncoder().encode(JWT_SECRET);
@@ -14,13 +14,10 @@ const jwtKey = await crypto.subtle.importKey(
   ["sign", "verify"],
 );
 
-const client = new MongoClient();
-await client.connect("mongodb://127.0.0.1:27017");
-const db = client.database("gestion_paquetes");
 const usuarios = db.collection<Usuario>("usuarios");
 
 export const loginHandler = async (ctx: RouterContext<"/api/login">) => {
-  console.log("Petición recibida en /api/login");
+  console.log("🟢 Petición recibida en /api/login");
   try {
     const { correo, password } = await ctx.request.body({ type: "json" }).value;
 
@@ -46,7 +43,6 @@ export const loginHandler = async (ctx: RouterContext<"/api/login">) => {
       return;
     }
 
-    // Genera el token JWT
     const token = await create(
       { alg: "HS256", typ: "JWT" },
       {
@@ -58,18 +54,17 @@ export const loginHandler = async (ctx: RouterContext<"/api/login">) => {
       jwtKey,
     );
 
-    // Envía el token en la respuesta
     ctx.response.status = 200;
     ctx.response.body = {
       tipo: user.tipo,
       correo: user.correo,
       departamento: user.departamento,
-      token, // <--- aquí va el token
+      token,
     };
   } catch (error) {
-    console.error("Error en loginHandler:", error);
+    console.error("❌ Error en loginHandler:", error);
     ctx.response.status = 500;
     ctx.response.body = { success: false, message: "Error interno del servidor" };
   }
 };
-
+export default loginHandler;

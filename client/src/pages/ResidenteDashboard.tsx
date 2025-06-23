@@ -1,5 +1,5 @@
-// client/src/pages/ResidenteDashboard.tsx
 import React, { useState, useEffect } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 import SidebarResidente from "../components/SidebarResidente.tsx";
 import NavbarResidente from "../components/NavbarResidente.tsx";
 import { useIsMobile } from "../hooks/useIsMobile.ts";
@@ -13,7 +13,21 @@ export default function ResidenteDashboard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [historial, setHistorial] = useState<Package[]>([]);
+  const [historialLoading, setHistorialLoading] = useState(false);
+  const [historialError, setHistorialError] = useState<string | null>(null);
+  const [historialPage, setHistorialPage] = useState(1);
+  const [historialPages, setHistorialPages] = useState(1);
+
+  const diasTranscurridos = (fechaRec: string) => {
+    const fecha = new Date(fechaRec);
+    const diffMs = Date.now() - fecha.getTime();
+    return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  };
+
   useEffect(() => {
+    if (section !== "pendientes") return;
+
     const token = localStorage.getItem("token");
     if (!token) {
       setError("No hay sesión activa. Por favor, inicia sesión.");
@@ -24,17 +38,14 @@ export default function ResidenteDashboard() {
     setLoading(true);
     setError(null);
 
-    const url =
-      section === "pendientes"
-        ? "/api/paquetes/residente"
-        : "/api/paquetes/residente?all=true";
-
-    fetch(url, {
-      headers: { Authorization: `Bearer ${token}` },
+    fetch("/api/paquetes/residente", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     })
       .then((res) => {
         if (!res.ok) throw new Error("No se pudieron obtener los paquetes.");
-        return res.json() as Promise<Package[]>;
+        return res.json();
       })
       .then((data) => setPaquetes(data))
       .catch((err) => {
@@ -43,6 +54,39 @@ export default function ResidenteDashboard() {
       })
       .finally(() => setLoading(false));
   }, [section]);
+
+  useEffect(() => {
+    if (section !== "historial") return;
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setHistorialError("No hay sesión activa. Por favor, inicia sesión.");
+      setHistorial([]);
+      return;
+    }
+
+    setHistorialLoading(true);
+    setHistorialError(null);
+
+    fetch(`/api/paquetes/historial?page=${historialPage}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("No se pudo obtener el historial.");
+        return res.json();
+      })
+      .then((data) => {
+        setHistorial(data.historial);
+        setHistorialPages(data.pages);
+      })
+      .catch((err) => {
+        setHistorialError(err.message || "Error al obtener historial.");
+        setHistorial([]);
+      })
+      .finally(() => setHistorialLoading(false));
+  }, [section, historialPage]);
 
   async function marcarRecibido(id: string) {
     const token = localStorage.getItem("token");
@@ -53,25 +97,17 @@ export default function ResidenteDashboard() {
     try {
       const res = await fetch(`/api/paquetes/${id}/recibido`, {
         method: "PUT",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
-      if (!res.ok) throw new Error("Error actualizando paquete");
+      if (!res.ok) throw new Error("Error al actualizar paquete");
       alert("Paquete marcado como recibido");
       setPaquetes((prev) => prev.filter((p) => p._id !== id));
-    } catch {
-      alert("No se pudo marcar como recibido");
+    } catch (error) {
+      alert("No se pudo marcar el paquete como recibido");
     }
   }
-
-  const pendientes = paquetes.filter((p) => p.estado === "Pendiente");
-  const paquetesHistorial = paquetes;
-
-  // Función auxiliar para días transcurridos
-  const diasTranscurridos = (fechaRec: string) => {
-    const fecha = new Date(fechaRec);
-    const diffMs = Date.now() - fecha.getTime();
-    return Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  };
 
   return (
     <div className="dashboard-wrapper conserje-dashboard-content">
@@ -82,62 +118,106 @@ export default function ResidenteDashboard() {
       )}
 
       <div className="container py-4" style={{ flex: 1 }}>
-        {section === "pendientes" ? (
+        {section === "pendientes" && (
           <>
             <h2 className="mb-4">Paquetes Pendientes</h2>
             {loading && <p>Cargando paquetes...</p>}
             {error && <p className="text-danger">{error}</p>}
             {!loading && !error && (
-              pendientes.length > 0 ? (
-                <ul>
-                  {pendientes.map((pkg) => {
-                    const dias = diasTranscurridos(pkg.fecha_recepcion);
-                    return (
-                      <li key={pkg._id}>
-                        <strong>{pkg.tracking_id}</strong> – Departamento: {pkg.departamento}, Tipo: {pkg.tipo}
-                        <span style={{ margin: "0 1rem" }}>•</span>
-                        <em>{dias} {dias === 1 ? "día" : "días"}</em>
-                        <button
-                          onClick={() => marcarRecibido(pkg._id)}
-                          style={{ marginLeft: "1rem" }}
-                        >
-                          Indicar recibido
-                        </button>
-                      </li>
-                    );
-                  })}
+              paquetes.filter(p => p.estado === "Pendiente").length > 0 ? (
+                <ul className="list-group">
+                  {paquetes
+                    .filter((pkg) => pkg.estado === "Pendiente")
+                    .map((pkg) => {
+                      const dias = diasTranscurridos(pkg.fecha_recepcion);
+                      return (
+                        <li key={pkg._id} className="list-group-item d-flex justify-content-between align-items-center">
+                          <div>
+                            <strong>{pkg.tracking_id}</strong> – Departamento: {pkg.departamento}, Tipo: {pkg.tipo}
+                            <br />
+                            <small className="text-muted">{dias} {dias === 1 ? "día" : "días"} desde recepción</small>
+                            <br />
+                            <small className="text-primary">
+                              Código de entrega: <strong>{pkg.codigo_entrega}</strong>
+                            </small>
+                          </div>
+                          <button
+                            className="btn btn-outline-primary btn-sm"
+                            onClick={() => marcarRecibido(pkg._id)}
+                          >
+                            Indicar recibido
+                          </button>
+                        </li>
+                      );
+                    })}
                 </ul>
               ) : (
                 <p>No tienes paquetes pendientes.</p>
               )
             )}
           </>
-        ) : (
+        )}
+
+        {section === "historial" && (
           <>
             <h2 className="mb-4">Historial de Paquetes</h2>
-            {loading && <p>Cargando historial...</p>}
-            {error && <p className="text-danger">{error}</p>}
-            {!loading && !error && (
-              paquetesHistorial.length > 0 ? (
-                <ul>
-                  {paquetesHistorial.map((pkg) => {
-                    const dias = diasTranscurridos(pkg.fecha_recepcion);
-                    return (
-                      <li key={pkg._id}>
-                        <strong>{pkg.tracking_id}</strong> – Departamento: {pkg.departamento}, Tipo: {pkg.tipo}, Estado: {pkg.estado}
-                        <span style={{ margin: "0 1rem" }}>•</span>
-                        <em>{dias} {dias === 1 ? "día" : "días"}</em>
-                      </li>
-                    );
-                  })}
-                </ul>
+            {historialLoading && <p>Cargando historial...</p>}
+            {historialError && <p className="text-danger">{historialError}</p>}
+            {!historialLoading && !historialError && (
+              historial.length > 0 ? (
+                <>
+                  <div className="table-responsive">
+                    <table className="table">
+                      <thead>
+                        <tr>
+                          <th>Tracking ID</th>
+                          <th>Tipo</th>
+                          <th>Estado</th>
+                          <th>Fecha de Recepción</th>
+                          <th>Días desde recepción</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {historial.map((pkg) => {
+                          const dias = diasTranscurridos(pkg.fecha_recepcion);
+                          return (
+                            <tr key={pkg._id}>
+                              <td>{pkg.tracking_id}</td>
+                              <td>{pkg.tipo}</td>
+                              <td>{pkg.estado}</td>
+                              <td>{new Date(pkg.fecha_recepcion).toLocaleString()}</td>
+                              <td>{dias} {dias === 1 ? "día" : "días"}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <button
+                      className="btn btn-secondary"
+                      disabled={historialPage === 1}
+                      onClick={() => setHistorialPage((p) => p - 1)}
+                    >
+                      Anterior
+                    </button>
+                    <span>Página {historialPage} de {historialPages}</span>
+                    <button
+                      className="btn btn-secondary"
+                      disabled={historialPage === historialPages}
+                      onClick={() => setHistorialPage((p) => p + 1)}
+                    >
+                      Siguiente
+                    </button>
+                  </div>
+                </>
               ) : (
-                <p>No tienes historial de paquetes.</p>
+                <p>No hay historial de paquetes.</p>
               )
             )}
           </>
         )}
       </div>
     </div>
-);
+  );
 }

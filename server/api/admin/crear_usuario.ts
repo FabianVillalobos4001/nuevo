@@ -1,6 +1,6 @@
 import { RouterContext } from "../../../deps.ts";
 import { hash } from "https://deno.land/x/bcrypt/mod.ts";
-import { MongoClient } from "https://deno.land/x/mongo@v0.31.1/mod.ts";
+import { MongoClient} from "https://deno.land/x/mongo@v0.31.1/mod.ts";
 import { Usuario } from "../../models/userModel.ts";
 
 const client = new MongoClient();

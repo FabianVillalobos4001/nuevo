@@ -1,10 +1,9 @@
 // server/api/verify_resident.ts
-import { RouterContext } from "../../deps.ts";
-import { MongoClient } from "../../deps.ts";
+import { MongoClient} from "https://deno.land/x/mongo@v0.31.1/mod.ts";
+import { RouterContext } from "https://deno.land/x/oak@v11.1.0/mod.ts";
 import { Resident } from "../models/residentModel.ts"; 
 import { Package } from "../models/packageModel.ts"; // <--- también importa Package
 import * as bcrypt from "https://deno.land/x/bcrypt@v0.3.0/mod.ts";
-import { create } from "https://deno.land/x/djwt@v2.6/mod.ts"; // Importamos el generador de JWT
 
 // Conexión a MongoDB
 const client = new MongoClient();

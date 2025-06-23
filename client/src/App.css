@@ -1,251 +1,248 @@
 body {
-  margin: 0;
-  padding: 0;
-  background-color: #F4F4F4;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  margin: 0; /* Elimina el margen por defecto del navegador */
+  padding: 0; /* Elimina el padding por defecto del navegador */
+  background-color: #F4F4F4; /* Color de fondo gris claro */
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; /* Tipografía base */
+  min-height: 100vh; /* Asegura que el body ocupe al menos toda la altura de la ventana */
+  display: flex; /* Permite usar flexbox */
+  flex-direction: column; /* Alinea hijos en columna */
 }
 
 #root {
-  width: 100%;
-  padding: 1rem;
+  width: 100%; /* Ocupa todo el ancho */
+  padding: 1rem; /* Espaciado interior */
 }
 
 .custom-title {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #990000;
-  text-align: center;
+  font-size: 2.5rem; /* Tamaño de letra grande */
+  font-weight: bold; /* Negrita */
+  color: #990000; /* Rojo oscuro */
+  text-align: center; /* Centrado */
 }
 
 .btn-primary {
-  background-color: #DD3D33;
-  color: #000;
-  font-weight: bold;
-  border: none;
+  background-color: #DD3D33; /* Rojo fuerte */
+  color: #000; /* Texto negro */
+  font-weight: bold; /* Negrita */
+  border: none; /* Sin borde */
 }
 
 .btn-primary:hover {
-  background-color: #c0c020;
+  background-color: #c0c020; /* Amarillo oscuro al pasar el mouse */
 }
 
 .form-label {
-  color: #A9A9A9;
-  font-weight: 500;
+  color: #A9A9A9; /* Gris claro */
+  font-weight: 500; /* Seminegrita */
 }
 
 .form-control {
-  border: 1px solid #ccc;
+  border: 1px solid #ccc; /* Borde gris claro */
 }
 
 .card {
-  background-color: #ffffff;
-  padding: 2rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.05);
+  background-color: #ffffff; /* Fondo blanco */
+  padding: 2rem; /* Espaciado interno */
+  border-radius: 0.5rem; /* Bordes redondeados */
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.05); /* Sombra leve */
 }
 
 .read-the-docs {
-  color: #888;
-  text-decoration: none;
+  color: #888; /* Gris medio */
+  text-decoration: none; /* Sin subrayado */
 }
 
 .read-the-docs:hover {
-  color: #0056b3;
+  color: #0056b3; /* Azul más fuerte al pasar el mouse */
 }
 
 .login-wrapper {
-  background-color: #ffffff;
-  border-radius: 0.75rem;
-  box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.1);
-  padding: 2rem;
-  width: 90%;
-  max-width: 42rem;
-  min-width: 18.75rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  background-color: #ffffff; /* Fondo blanco */
+  border-radius: 0.75rem; /* Bordes redondeados */
+  box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.1); /* Sombra suave */
+  padding: 2rem; /* Espaciado interno */
+  width: 90%; /* Ancho relativo */
+  max-width: 42rem; /* Máximo ancho */
+  min-width: 18.75rem; /* Mínimo ancho */
+  display: flex; /* Flexbox */
+  flex-direction: column; /* Elementos en columna */
+  align-items: center; /* Centrado horizontal */
+  justify-content: center; /* Centrado vertical */
+  text-align: center; /* Texto centrado */
 }
 
 @media (max-width: 48rem) {
   .login-wrapper {
-    width: 100%;
-    max-width: none;
-    border-radius: 0;
-    box-shadow: none;
-    padding: 1.5rem;
-    background-color: transparent;
+    width: 100%; /* Ocupa todo el ancho */
+    max-width: none; /* Sin límite */
+    border-radius: 0; /* Bordes cuadrados */
+    box-shadow: none; /* Sin sombra */
+    padding: 1.5rem; /* Menor padding */
+    background-color: transparent; /* Fondo transparente */
   }
 
   .login-wrapper h1 {
-    font-size: 1.5rem;
-    text-align: center;
+    font-size: 1.5rem; /* Título más pequeño */
+    text-align: center; /* Centrado */
   }
 
   .login-wrapper form,
   .login-wrapper .p-4 {
-    width: 100%;
-    max-width: 100%;
-    padding: 0;
-    box-shadow: none;
-    border-radius: 0;
+    width: 100%; /* Ancho completo */
+    max-width: 100%; /* Sin límite máximo */
+    padding: 0; /* Sin padding */
+    box-shadow: none; /* Sin sombra */
+    border-radius: 0; /* Bordes cuadrados */
   }
 }
 
 .conserje-dashboard-content {
-  background-color: #ffffff;
-  border-radius: 0.75rem;
-  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.05);
-  padding: 1rem;
-  width: 100%;
-  max-width: 100rem;
-  margin: 0.1rem auto;
+  background-color: #ffffff; /* Fondo blanco */
+  border-radius: 0.75rem; /* Bordes redondeados */
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.05); /* Sombra leve */
+  padding: 1rem; /* Espaciado interno */
+  width: 100%; /* Ancho completo */
+  max-width: 100rem; /* Máximo ancho */
+  margin: 0.1rem auto; /* Centrado con margen superior */
 }
 
 .formulario-paquete {
-  width: 100%;
-  max-width: 31.25rem;
-  margin: 0 auto;
+  width: 100%; /* Ancho completo */
+  max-width: 31.25rem; /* Máximo ancho */
+  margin: 0 auto; /* Centrado */
 }
 
 .formulario-paquete input,
 .formulario-paquete select {
-  border-radius: 0.375rem;
-  border: 1px solid #ccc;
-  padding: 0.5rem;
-  font-size: 1rem;
+  border-radius: 0.375rem; /* Bordes redondeados */
+  border: 1px solid #ccc; /* Borde gris claro */
+  padding: 0.5rem; /* Espaciado interno */
+  font-size: 1rem; /* Tamaño de texto estándar */
 }
 
 .formulario-paquete button {
-  background-color: #DD3D33;
-  color: #fff;
-  font-weight: bold;
-  border: none;
-  padding: 0.6rem;
-  border-radius: 0.375rem;
-  margin-top: 1rem;
+  background-color: #DD3D33; /* Rojo fuerte */
+  color: #fff; /* Texto blanco */
+  font-weight: bold; /* Negrita */
+  border: none; /* Sin borde */
+  padding: 0.6rem; /* Espaciado interno */
+  border-radius: 0.375rem; /* Bordes redondeados */
+  margin-top: 1rem; /* Separación superior */
 }
 
 .formulario-paquete button:hover {
-  background-color: #b72c25;
+  background-color: #b72c25; /* Rojo más oscuro al pasar el mouse */
 }
 
 @media (max-width: 48rem) {
   .conserje-dashboard-content {
-    border-radius: 0;
-    box-shadow: none;
-    padding: 1rem;
-    max-width: 100%;
-    margin: 0;
+    border-radius: 0; /* Sin bordes redondeados */
+    box-shadow: none; /* Sin sombra */
+    padding: 1rem; /* Espaciado interno */
+    max-width: 100%; /* Ancho completo */
+    margin: 0; /* Sin margen */
   }
 
   .formulario-paquete {
-    padding: 0;
-    max-width: 100%;
+    padding: 0; /* Sin padding */
+    max-width: 100%; /* Ancho completo */
   }
 }
 
 .sidebar-conserje {
-  background-color: #f8f9fa;
-  border-right: 1px solid #dee2e6;
-  min-height: 100vh;
-  padding: 0.5rem;
-  width: 15rem;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  background-color: #f8f9fa; /* Fondo gris muy claro */
+  border-right: 1px solid #dee2e6; /* Línea divisoria derecha */
+  min-height: 100vh; /* Ocupa toda la altura */
+  padding: 0.5rem; /* Espaciado interno */
+  width: 15rem; /* Ancho fijo */
+  flex-shrink: 0; /* No se reduce */
+  display: flex; /* Flexbox */
+  flex-direction: column; /* En columna */
+  justify-content: flex-start; /* Alineado arriba */
 }
 
 .sidebar-conserje h5 {
-  color: #990000;
-  font-weight: bold;
-  margin-bottom: 2rem;
+  color: #990000; /* Rojo oscuro */
+  font-weight: bold; /* Negrita */
+  margin-bottom: 2rem; /* Separación inferior */
 }
 
 .sidebar-conserje .nav-link {
-  cursor: pointer;
-  padding: 0.5rem 0;
-  font-weight: 500;
+  cursor: pointer; /* Cursor tipo enlace */
+  padding: 0.5rem 0; /* Espaciado vertical */
+  font-weight: 500; /* Seminegrita */
 }
 
 .sidebar-conserje .nav-link.active {
-  color: #DD3D33;
-  font-weight: bold;
+  color: #DD3D33; /* Rojo fuerte */
+  font-weight: bold; /* Negrita */
 }
 
-/* Puedes ajustar los valores según tu preferencia */
 .sidebar-active {
-  background-color: #f0f0f0;
-  border: 2px solid #bdbdbd;
-  border-radius: 0.5rem;
-  color: #333 !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-  padding: 0.5rem 4rem; /* Cambia aquí: 0.5rem arriba/abajo, 2rem izquierda/derecha */
+  background-color: #f0f0f0; /* Fondo gris claro */
+  border: 2px solid #bdbdbd; /* Borde gris medio */
+  border-radius: 0.5rem; /* Bordes redondeados */
+  color: #333 !important; /* Texto oscuro */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03); /* Sombra suave */
+  padding: 0.5rem 4rem; /* Espaciado interno */
 }
 
 @media (max-width: 48rem) {
   .sidebar-conserje {
-    width: 100%;
-    border-right: none;
-    border-bottom: 1px solid #dee2e6;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    align-items: center;
-    padding: 1rem;
+    width: 100%; /* Ancho completo */
+    border-right: none; /* Sin borde derecho */
+    border-bottom: 1px solid #dee2e6; /* Línea inferior */
+    flex-direction: row; /* En fila */
+    flex-wrap: wrap; /* Permite salto de línea */
+    justify-content: space-around; /* Distribuye elementos */
+    align-items: center; /* Alineación vertical */
+    padding: 1rem; /* Espaciado */
   }
 
   .sidebar-conserje .nav-link {
-    padding: 0.5rem 1rem;
-    font-size: 0.95rem;
+    padding: 0.5rem 1rem; /* Espaciado interno */
+    font-size: 0.95rem; /* Tamaño de fuente */
   }
 }
 
-
-
 .dashboard-wrapper {
-  display: flex;
-  flex-direction: row;
-  min-height: 100vh;
-  width: 100%;
-  background-color: #F4F4F4;
+  display: flex; /* Flexbox */
+  flex-direction: row; /* Elementos en fila */
+  min-height: 100vh; /* Altura completa */
+  width: 100%; /* Ancho completo */
+  background-color: #F4F4F4; /* Fondo gris claro */
 }
 
 @media (max-width: 48rem) {
   .dashboard-wrapper {
-    flex-direction: column;
+    flex-direction: column; /* Cambia a columna en pantallas pequeñas */
   }
 }
 
 .navbar-conserje {
-  background: #fff;
-  border-bottom: 1px solid #dee2e6;
-  width: 100%;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  display: flex;
-  justify-content: center; /* Centra horizontalmente los botones */
-  align-items: center;
-  gap: 2rem; /* Espacio uniforme entre botones, ajusta el valor según prefieras */
-  padding: 1rem 0;
+  background: #fff; /* Fondo blanco */
+  border-bottom: 1px solid #dee2e6; /* Línea inferior */
+  width: 100%; /* Ancho completo */
+  position: sticky; /* Pegajoso en scroll */
+  top: 0; /* Pegado arriba */
+  z-index: 100; /* Prioridad alta */
+  display: flex; /* Flexbox */
+  justify-content: center; /* Centrado horizontal */
+  align-items: center; /* Centrado vertical */
+  gap: 2rem; /* Espaciado entre elementos */
+  padding: 1rem 0; /* Espaciado vertical */
 }
 
 .navbar-conserje span {
-  cursor: pointer;
-  font-weight: 500;
-  padding: 0.5rem 1.5rem;
-  border-radius: 0.5rem;
-  transition: background 0.2s;
+  cursor: pointer; /* Cursor tipo enlace */
+  font-weight: 500; /* Seminegrita */
+  padding: 0.5rem 1.5rem; /* Espaciado interno */
+  border-radius: 0.5rem; /* Bordes redondeados */
+  transition: background 0.2s; /* Transición suave */
 }
 
 .navbar-conserje span.active,
 .navbar-conserje span.fw-bold {
-  background: #f0f0f0;
-  color: #DD3D33;
+  background: #f0f0f0; /* Fondo gris claro */
+  color: #DD3D33; /* Rojo fuerte */
 }

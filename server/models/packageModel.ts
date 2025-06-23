@@ -8,5 +8,7 @@ export interface Package {
   tipo: "Normal" | "Congelado" | "Frágil" | "Urgente";
   estado: "Pendiente" | "Entregado";
   fecha_recepcion: Date;
-  notificado: boolean;  // Si ya se notificó al destinatario
+  notificado: boolean;
+  codigo_entrega: string;
+  ultima_notificacion?: Date; // ✅ nuevo campo opcional
 }
