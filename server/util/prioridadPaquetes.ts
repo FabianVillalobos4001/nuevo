@@ -1,7 +1,7 @@
 import type { Package } from "../models/packageModel.ts";
 
 // Tiempos en minutos para volver a notificar
-const MIN_URGENTE_RENOTIF = 0.1;
+const MIN_URGENTE_RENOTIF = 5;
 const MIN_CONGELADO_RENOTIF = 30;
 const MIN_FRAGIL_RENOTIF = 60 * 6;  // 6 horas
 const MIN_OTRO_RENOTIF = 60 * 24;  // 24 horas

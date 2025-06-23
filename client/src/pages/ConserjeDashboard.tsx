@@ -4,10 +4,18 @@ import NavbarConserje from "../components/NavbarConserje.tsx";
 import { useIsMobile } from "../hooks/useIsMobile.ts";
 import type { Package } from "../../../server/models/packageModel.ts";
 import { toast } from "react-toastify";
+import UserProfileBall from "../components/UserProfileBall.tsx";
+import { getTodosLosPaquetes } from './api/paquetes.ts';
+import { useNavigate } from "react-router-dom";
+
+
+const router = new Router();
+router.get("/api/paquetes/all", getTodosLosPaquetes);
 
 export default function ConserjeDashboard() {
   const [section, setSection] = useState<"registro" | "historial" | "pendientes">("registro");
   const isMobile = useIsMobile(769);
+  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     destinatario: "",
@@ -170,176 +178,189 @@ export default function ConserjeDashboard() {
     return coincideDepartamento && coincideFecha;
   });
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
+  };
+
   return (
-    <div className="dashboard-wrapper conserje-dashboard-content">
-      {isMobile ? (
-        <NavbarConserje active={section} onSelect={setSection} />
-      ) : (
-        <SidebarConserje active={section} onSelect={setSection} />
-      )}
+    <>
+      <UserProfileBall
+        tipo="conserje"
+        nombre="Juan Pérez" // puedes usar una variable si tienes el nombre dinámico
+        onLogout={handleLogout}
+      />
 
-      <div className="container py-4" style={{ flex: 1 }}>
-        {section === "registro" && (
-          <>
-            <h2 className="mb-4">Registro de Paquetes</h2>
-            <form onSubmit={handleSubmit} className="formulario-paquete">
-              <div className="mb-3">
-                <label htmlFor="destinatario" className="form-label">Correo del destinatario</label>
-                <input type="email" id="destinatario" name="destinatario" className="form-control" value={form.destinatario} onChange={handleChange} required />
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="departamento" className="form-label">Departamento</label>
-                <input type="text" id="departamento" name="departamento" className="form-control" value={form.departamento} onChange={handleChange} required />
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="tipo" className="form-label">Tipo de paquete</label>
-                <select id="tipo" name="tipo" className="form-select" value={form.tipo} onChange={handleChange}>
-                  <option value="Normal">Normal</option>
-                  <option value="Congelado">Congelado</option>
-                  <option value="Frágil">Frágil</option>
-                  <option value="Urgente">Urgente</option>
-                </select>
-              </div>
-
-              <button type="submit" className="btn btn-success w-100">Registrar Paquete</button>
-            </form>
-          </>
+      <div className="dashboard-wrapper conserje-dashboard-content">
+        {isMobile ? (
+          <NavbarConserje active={section} onSelect={setSection} />
+        ) : (
+          <SidebarConserje active={section} onSelect={setSection} />
         )}
 
-        {section === "historial" && (
-          <>
-            <h2 className="mb-4">Historial de Paquetes</h2>
-            <div className="row mb-3">
-              <div className="col-md-6">
-                <input type="text" className="form-control" placeholder="Buscar por departamento" value={filtroDepartamento} onChange={(e) => setFiltroDepartamento(e.target.value)} />
-              </div>
-              <div className="col-md-6">
-                <input type="date" className="form-control" value={filtroFecha} onChange={(e) => setFiltroFecha(e.target.value)} />
-              </div>
-            </div>
+        <div className="container py-4" style={{ flex: 1 }}>
+          {section === "registro" && (
+            <>
+              <h2 className="mb-4">Registro de Paquetes</h2>
+              <form onSubmit={handleSubmit} className="formulario-paquete">
+                <div className="mb-3">
+                  <label htmlFor="destinatario" className="form-label">Correo del destinatario</label>
+                  <input type="email" id="destinatario" name="destinatario" className="form-control" value={form.destinatario} onChange={handleChange} required />
+                </div>
 
-            {loading && <p>Cargando historial...</p>}
-            {error && <p className="text-danger">{error}</p>}
-            {!loading && !error && paquetesFiltrados.length > 0 ? (
-              <div className="table-responsive">
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>Tracking ID</th>
-                      <th>Tipo</th>
-                      <th>Departamento</th>
-                      <th>Estado</th>
-                      <th>Fecha de Recepción</th>
-                      <th>Días</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {paquetesFiltrados.map((pkg) => {
-                      const dias = diasTranscurridos(pkg.fecha_recepcion);
-                      return (
-                        <tr key={pkg._id}>
-                          <td>{pkg.tracking_id}</td>
-                          <td>{pkg.tipo}</td>
-                          <td>{pkg.departamento}</td>
-                          <td>{pkg.estado}</td>
-                          <td>{new Date(pkg.fecha_recepcion).toLocaleString()}</td>
-                          <td>{dias}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <p>No hay paquetes registrados.</p>
-            )}
-          </>
-        )}
+                <div className="mb-3">
+                  <label htmlFor="departamento" className="form-label">Departamento</label>
+                  <input type="text" id="departamento" name="departamento" className="form-control" value={form.departamento} onChange={handleChange} required />
+                </div>
 
-        {section === "pendientes" && (
-          <>
-            <h2 className="mb-4">Paquetes Pendientes</h2>
-            {loading && <p>Cargando paquetes...</p>}
-            {error && <p className="text-danger">{error}</p>}
-            {!loading && !error && paquetesFiltrados.filter(pkg => pkg.estado === "Pendiente").length > 0 ? (
-              <div className="table-responsive">
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>Tracking ID</th>
-                      <th>Departamento</th>
-                      <th>Fecha de Recepción</th>
-                      <th>Acción</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {paquetesFiltrados
-                      .filter(pkg => pkg.estado === "Pendiente")
-                      .sort((a, b) => diasTranscurridos(b.fecha_recepcion) - diasTranscurridos(a.fecha_recepcion)) // Más antiguos primero
-                      .map((pkg) => (
-                        <tr key={pkg._id}>
-                          <td>{pkg.tracking_id}</td>
-                          <td>{pkg.departamento}</td>
-                          <td>{new Date(pkg.fecha_recepcion).toLocaleString()}</td>
-                          <td>
-                            <button
-                              className="btn btn-outline-success btn-sm"
-                              onClick={() => abrirModal(pkg)}
-                            >
-                              Recibido
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <p>No hay paquetes pendientes.</p>
-            )}
+                <div className="mb-3">
+                  <label htmlFor="tipo" className="form-label">Tipo de paquete</label>
+                  <select id="tipo" name="tipo" className="form-select" value={form.tipo} onChange={handleChange}>
+                    <option value="Normal">Normal</option>
+                    <option value="Congelado">Congelado</option>
+                    <option value="Frágil">Frágil</option>
+                    <option value="Urgente">Urgente</option>
+                  </select>
+                </div>
 
-            {/* Modal para ingresar código de entrega */}
-            {mostrarModal && paqueteSeleccionado && (
-              <div className="modal fade show" style={{ display: "block", background: "rgba(0,0,0,0.5)" }}>
-                <div className="modal-dialog">
-                  <div className="modal-content">
-                    <form onSubmit={handleVerificacion}>
-                      <div className="modal-header">
-                        <h5 className="modal-title">Entregar paquete</h5>
-                        <button type="button" className="btn-close" onClick={cerrarModal}></button>
-                      </div>
-                      <div className="modal-body">
-                        <p>
-                          <strong>Tracking ID:</strong> {paqueteSeleccionado.tracking_id}<br />
-                          <strong>Departamento:</strong> {paqueteSeleccionado.departamento}
-                        </p>
-                        <div className="mb-3">
-                          <label htmlFor="codigo_entrega" className="form-label">Código de entrega</label>
-                          <input
-                            type="text"
-                            id="codigo_entrega"
-                            name="codigo_entrega"
-                            className="form-control"
-                            value={verificacion.codigo_entrega}
-                            onChange={handleVerificacionChange}
-                            required
-                          />
-                        </div>
-                      </div>
-                      <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" onClick={cerrarModal}>Cerrar</button>
-                        <button type="submit" className="btn btn-success">Entregar</button>
-                      </div>
-                    </form>
-                  </div>
+                <button type="submit" className="btn btn-success w-100">Registrar Paquete</button>
+              </form>
+            </>
+          )}
+
+          {section === "historial" && (
+            <>
+              <h2 className="mb-4">Historial de Paquetes</h2>
+              <div className="row mb-3">
+                <div className="col-md-6">
+                  <input type="text" className="form-control" placeholder="Buscar por departamento" value={filtroDepartamento} onChange={(e) => setFiltroDepartamento(e.target.value)} />
+                </div>
+                <div className="col-md-6">
+                  <input type="date" className="form-control" value={filtroFecha} onChange={(e) => setFiltroFecha(e.target.value)} />
                 </div>
               </div>
-            )}
-          </>
-        )}
+
+              {loading && <p>Cargando historial...</p>}
+              {error && <p className="text-danger">{error}</p>}
+              {!loading && !error && paquetesFiltrados.length > 0 ? (
+                <div className="table-responsive">
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>Tracking ID</th>
+                        <th>Tipo</th>
+                        <th>Departamento</th>
+                        <th>Estado</th>
+                        <th>Fecha de Recepción</th>
+                        <th>Días</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {paquetesFiltrados.map((pkg) => {
+                        const dias = diasTranscurridos(pkg.fecha_recepcion);
+                        return (
+                          <tr key={pkg._id}>
+                            <td>{pkg.tracking_id}</td>
+                            <td>{pkg.tipo}</td>
+                            <td>{pkg.departamento}</td>
+                            <td>{pkg.estado}</td>
+                            <td>{new Date(pkg.fecha_recepcion).toLocaleString()}</td>
+                            <td>{dias}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p>No hay paquetes registrados.</p>
+              )}
+            </>
+          )}
+
+          {section === "pendientes" && (
+            <>
+              <h2 className="mb-4">Paquetes Pendientes</h2>
+              {loading && <p>Cargando paquetes...</p>}
+              {error && <p className="text-danger">{error}</p>}
+              {!loading && !error && paquetesFiltrados.filter(pkg => pkg.estado === "Pendiente").length > 0 ? (
+                <div className="table-responsive">
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>Tracking ID</th>
+                        <th>Departamento</th>
+                        <th>Fecha de Recepción</th>
+                        <th>Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {paquetesFiltrados
+                        .filter(pkg => pkg.estado === "Pendiente")
+                        .sort((a, b) => diasTranscurridos(b.fecha_recepcion) - diasTranscurridos(a.fecha_recepcion)) // Más antiguos primero
+                        .map((pkg) => (
+                          <tr key={pkg._id}>
+                            <td>{pkg.tracking_id}</td>
+                            <td>{pkg.departamento}</td>
+                            <td>{new Date(pkg.fecha_recepcion).toLocaleString()}</td>
+                            <td>
+                              <button
+                                className="btn btn-outline-success btn-sm"
+                                onClick={() => abrirModal(pkg)}
+                              >
+                                Recibido
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p>No hay paquetes pendientes.</p>
+              )}
+
+              {/* Modal para ingresar código de entrega */}
+              {mostrarModal && paqueteSeleccionado && (
+                <div className="modal fade show" style={{ display: "block", background: "rgba(0,0,0,0.5)" }}>
+                  <div className="modal-dialog">
+                    <div className="modal-content">
+                      <form onSubmit={handleVerificacion}>
+                        <div className="modal-header">
+                          <h5 className="modal-title">Entregar paquete</h5>
+                          <button type="button" className="btn-close" onClick={cerrarModal}></button>
+                        </div>
+                        <div className="modal-body">
+                          <p>
+                            <strong>Tracking ID:</strong> {paqueteSeleccionado.tracking_id}<br />
+                            <strong>Departamento:</strong> {paqueteSeleccionado.departamento}
+                          </p>
+                          <div className="mb-3">
+                            <label htmlFor="codigo_entrega" className="form-label">Código de entrega</label>
+                            <input
+                              type="text"
+                              id="codigo_entrega"
+                              name="codigo_entrega"
+                              className="form-control"
+                              value={verificacion.codigo_entrega}
+                              onChange={handleVerificacionChange}
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div className="modal-footer">
+                          <button type="button" className="btn btn-secondary" onClick={cerrarModal}>Cerrar</button>
+                          <button type="submit" className="btn btn-success">Entregar</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

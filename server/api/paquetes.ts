@@ -56,7 +56,7 @@ export const handler = async (ctx: RouterContext<"/api/paquetes">) => {
         {
           $set: {
             notificado: true,
-            ultima_notificacion: new Date() // ✅ CLAVE para que funcione la lógica de reenvío
+            ultima_notificacion: new Date() // Actualizamos la fecha de notificación
           }
         }
       );

@@ -1,32 +1,50 @@
-import type { Package } from "../models/packageModel.ts";
-
-// Tiempos en minutos para volver a notificar
-const MIN_URGENTE_RENOTIF = 0.1;
-const MIN_CONGELADO_RENOTIF = 30;
-const MIN_FRAGIL_RENOTIF = 60 * 6;  // 6 horas
-const MIN_OTRO_RENOTIF = 60 * 24;  // 24 horas
+import { packages } from "../config/db.ts"; 
+import { obtenerPaquetesPrioritarios } from "./prioridadPaquetes.ts";
+import { enviarCorreo } from "./email.ts";
 
 /**
- * Filtra los paquetes que deben recibir un recordatorio
+ * Revisa paquetes pendientes y envía recordatorios con detalles correctos.
  */
-export function obtenerPaquetesPrioritarios(paquetes: Package[]): Package[] {
-  const ahora = new Date();
+export async function notificarPrioritarios() {
+  try {
+    // 1. Obtener todos los paquetes pendientes
+    const paquetes = await packages.find({ estado: "Pendiente" }).toArray();
 
-  return paquetes.filter(pkg => {
-    if (pkg.estado !== "Pendiente" || !pkg.ultima_notificacion) return false;
+    // 2. Filtrar los que necesitan recordatorio según última notificación
+    const lista = obtenerPaquetesPrioritarios(paquetes);
 
-    const ultima = new Date(pkg.ultima_notificacion);
-    const minutosDesdeUltima = (ahora.getTime() - ultima.getTime()) / (1000 * 60);
+    console.log(`🔔 Enviando recordatorios para ${lista.length} paquetes prioritarios...`);
 
-    switch (pkg.tipo) {
-      case "Urgente":
-        return minutosDesdeUltima >= MIN_URGENTE_RENOTIF;
-      case "Congelado":
-        return minutosDesdeUltima >= MIN_CONGELADO_RENOTIF;
-      case "Frágil":
-        return minutosDesdeUltima >= MIN_FRAGIL_RENOTIF;
-      default:
-        return minutosDesdeUltima >= MIN_OTRO_RENOTIF;
+    for (const pkg of lista) {
+      const fechaRecepcion = pkg.fecha_recepcion instanceof Date
+        ? pkg.fecha_recepcion
+        : new Date(pkg.fecha_recepcion);
+
+      // 3. Enviar correo de recordatorio
+      await enviarCorreo(
+        pkg.destinatario,
+        pkg.departamento,
+        pkg.tipo,
+        fechaRecepcion,
+        pkg.tracking_id,
+        true // es un recordatorio
+      );
+
+      // 4. Actualizar fecha de última notificación
+      await packages.updateOne(
+        { tracking_id: pkg.tracking_id },
+        {
+          $set: {
+            ultima_notificacion: new Date(), // actualizar fecha de notificación
+          },
+        }
+      );
+
+      console.log(`✅ Recordatorio enviado: ${pkg.tracking_id}`);
     }
-  });
+
+    console.log("🚀 Finalizó notificarPrioritarios");
+  } catch (err) {
+    console.error("❌ Error en notificarPrioritarios:", err);
+  }
 }
