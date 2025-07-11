@@ -2,7 +2,7 @@
   "tasks": {
     "serve": "cd BosserP05 && deno task build && deno task server:start",
     "build": "cd BosserP05 && deno task build", 
-    "start": "cd BosserP05 && deno run -A --node-modules-dir=auto --no-lock server/main.ts",
+    "start": "cd BosserP05 && deno run -A --no-lock server/main.ts",
     "dev": "cd BosserP05 && deno task dev",
     "server:start": "cd BosserP05 && deno task server:start"
   },

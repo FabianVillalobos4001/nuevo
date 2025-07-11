@@ -1,8 +1,8 @@
 {
   "tasks": {
-    "dev": "deno run -A --node-modules-dir=auto npm:vite",
-    "build": "deno run -A --node-modules-dir=auto npm:vite build",
-    "server:start": "deno run -A --node-modules-dir=auto --no-lock --watch server/main.ts",
+    "dev": "deno run -A npm:vite",
+    "build": "deno run -A npm:vite build",
+    "server:start": "deno run -A --no-lock --watch server/main.ts",
     "serve": "deno task build && deno task server:start"
   },
   "imports": {
