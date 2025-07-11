@@ -7,10 +7,6 @@ dockerfilePath = "Dockerfile"
 # healthcheckTimeout = 300
 # restartPolicyType = "on_failure"
 
-[[services]]
-name = "backend"
-source = "BosserP05"
-
 [services.variables]
 PORT = "${{ PORT }}"
 MONGODB_URI = "${{ MONGODB_URI }}"
