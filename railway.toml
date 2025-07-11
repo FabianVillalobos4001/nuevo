@@ -1,6 +1,6 @@
 [build]
 builder = "dockerfile"
-dockerfilePath = "BosserP05/Dockerfile"
+dockerfilePath = "Dockerfile"
 
 # [deploy] - Comentado para deshabilitar healthcheck
 # healthcheckPath = "/health"
