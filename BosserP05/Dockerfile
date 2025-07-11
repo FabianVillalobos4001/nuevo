@@ -7,6 +7,7 @@ WORKDIR /app
 # Variables de entorno (debe ir antes de cualquier comando Deno)
 ENV PORT=8000
 ENV MONGODB_URI=""
+ENV NODE_ENV=production
 ENV DENO_DIR=/app/.deno_cache
 
 # Copiar todo el proyecto (incluye deps.ts)
@@ -25,4 +26,4 @@ EXPOSE 8000
 USER deno
 
 # Comando para ejecutar el servidor
-CMD ["deno", "run", "--allow-net", "--allow-read", "--allow-env", "server/main.ts"]
+CMD ["deno", "run", "-A", "server/main.ts"]
