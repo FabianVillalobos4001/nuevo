@@ -1,7 +1,7 @@
 import { Application, Router, oakCors } from "../deps.ts";
 import routeStaticFilesFrom from "./util/routeStaticFilesFrom.ts";
 import { notificarPrioritarios } from "./util/notificarPrioritarios.ts";
-import { packages } from "./config/db.ts";
+import { packages, getDatabase } from "./config/db.ts";
 import { obtenerPaquetesPrioritarios } from "./util/prioridadPaquetes.ts";
 
 // Controladores
@@ -65,6 +65,45 @@ router.get("/health", (ctx) => {
     env: Deno.env.get("NODE_ENV") || "development"
   };
   console.log("✅ Health check respondido correctamente");
+});
+
+// ==== Rutas de debug ====
+// Ruta de debug para Railway
+router.get("/debug", async (ctx) => {
+  console.log("🔍 Debug endpoint solicitado");
+  try {
+    const debugInfo = {
+      status: "OK",
+      timestamp: new Date().toISOString(),
+      environment: {
+        port: Deno.env.get("PORT") || "8000",
+        nodeEnv: Deno.env.get("NODE_ENV") || "development",
+        platform: Deno.build.os,
+        arch: Deno.build.arch,
+        version: Deno.version.deno
+      },
+      runtime: {
+        cwd: Deno.cwd(),
+        hostname: await Deno.hostname?.() || "unknown",
+        uptime: performance.now(),
+        memory: Deno.memoryUsage?.() || "not available"
+      },
+      database: {
+        status: "checking...",
+        uri: Deno.env.get("MONGODB_URI") ? "configured" : "not configured"
+      }
+    };
+    
+    ctx.response.status = 200;
+    ctx.response.headers.set("Content-Type", "application/json");
+    ctx.response.body = debugInfo;
+    console.log("✅ Debug info enviado");
+  } catch (error) {
+    const err = error as Error;
+    console.error("❌ Error en debug endpoint:", err.message);
+    ctx.response.status = 500;
+    ctx.response.body = { error: "Debug endpoint failed", message: err.message };
+  }
 });
 
 // ==== Servir archivos estáticos (frontend) ====
