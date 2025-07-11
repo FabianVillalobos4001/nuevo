@@ -52,24 +52,17 @@ async function connectToMongoDB() {
 // Crear una base de datos mock para desarrollo/fallback
 function createMockDatabase() {
   const mockCollection = {
-    find: () => ({ 
-      toArray: () => Promise.resolve([]), 
-      sort: () => ({ 
-        limit: () => ({ 
-          toArray: () => Promise.resolve([]) 
-        }) 
-      }) 
-    }),
-    findOne: () => Promise.resolve(null),
-    insertOne: () => Promise.resolve({ insertedId: "mock" }),
-    updateOne: () => Promise.resolve({ modifiedCount: 0 }),
-    deleteOne: () => Promise.resolve({ deletedCount: 0 }),
-    countDocuments: () => Promise.resolve(0),
+    find: () => ({ toArray: async () => [], sort: () => ({ limit: () => ({ toArray: async () => [] }) }) }),
+    findOne: async () => null,
+    insertOne: async () => ({ insertedId: "mock" }),
+    updateOne: async () => ({ modifiedCount: 0 }),
+    deleteOne: async () => ({ deletedCount: 0 }),
+    countDocuments: async () => 0,
   };
   
   return {
     collection: () => mockCollection,
-    listCollectionNames: () => Promise.resolve([]),
+    listCollectionNames: async () => [],
   };
 }
 
@@ -85,6 +78,18 @@ export const usuarios = db.collection("usuarios");
 export function getDatabase() {
   return db;
 }
+
+// Función para cerrar la conexión
+export async function closeConnection(): Promise<void> {
+  try {
+    await client.close();
+    console.log("🔌 Conexión a MongoDB cerrada");
+  } catch (error) {
+    console.error("❌ Error al cerrar la conexión:", error);
+  }
+}
+
+export default db;
 
 // Función para cerrar la conexión
 export async function closeConnection(): Promise<void> {
