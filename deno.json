@@ -1,9 +1,10 @@
 {
   "tasks": {
-    "dev": "deno run -A --node-modules-dir=auto npm:vite",
-    "build": "deno run -A --node-modules-dir=auto npm:vite build",
-    "server:start": "deno run -A --node-modules-dir --watch ./server/main.ts",
-    "serve": "deno task build && deno task server:start"
+    "serve": "cd BosserP05 && deno task build && deno task server:start",
+    "build": "cd BosserP05 && deno task build", 
+    "start": "cd BosserP05 && deno run -A --node-modules-dir=auto server/main.ts",
+    "dev": "cd BosserP05 && deno task dev",
+    "server:start": "cd BosserP05 && deno task server:start"
   },
   "imports": {
     "@deno/vite-plugin": "npm:@deno/vite-plugin@^1.0.4",
