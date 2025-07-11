@@ -1,18 +1,13 @@
 import { MongoClient } from "../../deps.ts";
 
 // Variables de entorno para la configuración de la base de datos
-const MONGO_USERNAME = Deno.env.get("MONGO_USERNAME") || "fabiatronix2003";
-const MONGO_PASSWORD = Deno.env.get("MONGO_PASSWORD") || "bosser123";
-const MONGO_CLUSTER = Deno.env.get("MONGO_CLUSTER") || "cluster0.ldnjccq.mongodb.net";
+const MONGODB_URI = Deno.env.get("MONGODB_URI") || 
+  `mongodb+srv://${Deno.env.get("MONGO_USERNAME") || "fabiatronix2003"}:${Deno.env.get("MONGO_PASSWORD") || "bosser123"}@${Deno.env.get("MONGO_CLUSTER") || "cluster0.ldnjccq.mongodb.net"}/${Deno.env.get("DB_NAME") || "gestion_paquetes"}?retryWrites=true&w=majority&authSource=admin&authMechanism=SCRAM-SHA-1`;
+
 const DB_NAME = Deno.env.get("DB_NAME") || "gestion_paquetes";
 
-// Crear la URI de conexión para MongoDB Atlas
-// IMPORTANTE: Incluir authMechanism=SCRAM-SHA-1 explícitamente
-const mongoURI = `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_CLUSTER}/?retryWrites=true&w=majority&authSource=admin&authMechanism=SCRAM-SHA-1`;
-
-console.log("🔐 Intentando conectar con usuario:", MONGO_USERNAME);
-console.log("🌐 Cluster:", MONGO_CLUSTER);
 console.log("🔗 Conectando a MongoDB Atlas...");
+console.log("🔐 Base de datos:", DB_NAME);
 
 // Crear instancia del cliente
 const client = new MongoClient();
@@ -20,10 +15,10 @@ const client = new MongoClient();
 // Función para conectar a MongoDB Atlas
 async function connectToMongoDB() {
   try {
-    console.log("🔗 URI de conexión:", mongoURI.replace(MONGO_PASSWORD!, "***"));
+    console.log("🔗 Conectando usando MONGODB_URI...");
     
     // Conectar usando la URI de MongoDB Atlas
-    await client.connect(mongoURI);
+    await client.connect(MONGODB_URI);
     
     // Seleccionar la base de datos
     const database = client.database(DB_NAME);
@@ -39,8 +34,6 @@ async function connectToMongoDB() {
     return database;
   } catch (error) {
     console.error("❌ Error al conectar a MongoDB Atlas:");
-    console.error("   Cluster:", MONGO_CLUSTER);
-    console.error("   Usuario:", MONGO_USERNAME);
     console.error("   Base de datos:", DB_NAME);
     console.error("   Error detallado:", error);
     
