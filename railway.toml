@@ -4,7 +4,7 @@ dockerfilePath = "BosserP05/Dockerfile"
 
 [deploy]
 healthcheckPath = "/health"
-healthcheckTimeout = 100
+healthcheckTimeout = 300
 restartPolicyType = "on_failure"
 
 [[services]]

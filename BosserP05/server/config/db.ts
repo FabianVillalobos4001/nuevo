@@ -25,7 +25,16 @@ async function connectToMongoDB() {
     console.log("🔗 Conectando usando MONGODB_URI...");
     
     client = new MongoClient();
-    await client.connect(MONGODB_URI);
+    
+    // Timeout de conexión más corto para evitar bloqueos
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error("Connection timeout")), 10000)
+    );
+    
+    await Promise.race([
+      client.connect(MONGODB_URI),
+      timeoutPromise
+    ]);
     
     database = client.database(DB_NAME);
     
@@ -43,6 +52,7 @@ async function connectToMongoDB() {
     const err = error as Error;
     console.error("❌ Error al conectar a MongoDB Atlas:", err.message);
     console.log("⚠️ Continuando sin base de datos real...");
+    isConnected = false;
     return null;
   }
 }
@@ -125,11 +135,7 @@ export async function closeConnection(): Promise<void> {
   }
 }
 
-// Intentar conectar en background (no bloquea el startup)
-setTimeout(() => {
-  connectToMongoDB().catch(() => {
-    console.log("⚠️ MongoDB no disponible al inicio, se intentará conectar cuando sea necesario");
-  });
-}, 1000); // Delay de 1 segundo para permitir que el servidor arranque primero
+// NO intentar conectar al inicio - solo cuando sea necesario
+console.log("🔗 Configuración de MongoDB lista (conexión lazy)");
 
 export default { packages, residents, usuarios };

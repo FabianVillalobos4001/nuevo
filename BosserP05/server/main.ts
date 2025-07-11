@@ -53,18 +53,11 @@ router.get("/api/paquetes/notificar-prioritarios", notificarPaquetesPrioritarios
 router.post("/api/paquetes/validar-codigo", validarCodigoEntrega); // <-- agrega esta línea
 
 // ==== Rutas de health check ====
-// Ruta de health check para Railway
+// Ruta de health check para Railway - SUPER SIMPLE
 router.get("/health", (ctx) => {
-  console.log("🏥 Health check solicitado");
   ctx.response.status = 200;
   ctx.response.headers.set("Content-Type", "application/json");
-  ctx.response.body = { 
-    status: "OK", 
-    timestamp: new Date().toISOString(),
-    port: Deno.env.get("PORT") || "8000",
-    env: Deno.env.get("NODE_ENV") || "development"
-  };
-  console.log("✅ Health check respondido correctamente");
+  ctx.response.body = { status: "OK" };
 });
 
 // ==== Rutas de debug ====
@@ -117,10 +110,17 @@ app.use(
   ])
 );
 
-// Ejecutar cada 5 minutos 
-setInterval(() => {
-  notificarPrioritarios();
-}, 5 * 60 * 1000);
+// Ejecutar cada 5 minutos (solo en producción y después de 2 minutos)
+if (Deno.env.get("NODE_ENV") === "production") {
+  setTimeout(() => {
+    setInterval(() => {
+      notificarPrioritarios();
+    }, 5 * 60 * 1000);
+    console.log("📧 Sistema de notificaciones activado");
+  }, 2 * 60 * 1000); // Esperar 2 minutos antes de activar
+} else {
+  console.log("📧 Sistema de notificaciones desactivado en desarrollo");
+}
 
 const port = parseInt(Deno.env.get("PORT") || "8000");
 console.log(`🚀 Iniciando servidor en puerto ${port}`);
