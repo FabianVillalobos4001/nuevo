@@ -3,7 +3,7 @@ builder = "dockerfile"
 dockerfilePath = "BosserP05/Dockerfile"
 
 [deploy]
-healthcheckPath = "/"
+healthcheckPath = "/health"
 healthcheckTimeout = 100
 restartPolicyType = "on_failure"
 

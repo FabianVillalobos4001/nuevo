@@ -52,6 +52,13 @@ router.get("/api/paquetes/prioritarios", authMiddleware, async (ctx) => {
 router.get("/api/paquetes/notificar-prioritarios", notificarPaquetesPrioritarios); // Notificar por email paquetes prioritarios
 router.post("/api/paquetes/validar-codigo", validarCodigoEntrega); // <-- agrega esta línea
 
+// ==== Rutas de health check ====
+// Ruta de health check para Railway
+router.get("/health", (ctx) => {
+  ctx.response.status = 200;
+  ctx.response.body = { status: "OK", timestamp: new Date().toISOString() };
+});
+
 // ==== Servir archivos estáticos (frontend) ====
 app.use(oakCors());
 app.use(router.routes());
@@ -68,5 +75,6 @@ setInterval(() => {
   notificarPrioritarios();
 }, 5 * 60 * 1000);
 
-console.log("Servidor en http://localhost:8000");
-await app.listen({ port: 8000 });
+const port = parseInt(Deno.env.get("PORT") || "8000");
+console.log(`Servidor en http://localhost:${port}`);
+await app.listen({ port });

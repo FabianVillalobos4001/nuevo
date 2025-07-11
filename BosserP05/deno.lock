@@ -13,6 +13,7 @@
     "npm:@vitejs/plugin-react@^4.4.1": "4.6.0_vite@6.3.5__picomatch@4.0.2_@babel+core@7.27.4",
     "npm:bootstrap@^5.3.3": "5.3.7_@popperjs+core@2.11.8",
     "npm:nodemailer@*": "7.0.3",
+    "npm:path-to-regexp@^6.3.0": "6.3.0",
     "npm:react-dom@^19.1.0": "19.1.0_react@19.1.0",
     "npm:react-router-dom@^7.5.1": "7.6.2_react@19.1.0_react-dom@19.1.0__react@19.1.0",
     "npm:react-toastify@^11.0.5": "11.0.5_react@19.1.0_react-dom@19.1.0__react@19.1.0",
@@ -622,6 +623,9 @@
     },
     "nodemailer@7.0.3": {
       "integrity": "sha512-Ajq6Sz1x7cIK3pN6KesGTah+1gnwMnx5gKl3piQlQQE/PwyJ4Mbc8is2psWYxK3RJTVeqsDaCv8ZzXLCDHMTZw=="
+    },
+    "path-to-regexp@6.3.0": {
+      "integrity": "sha512-Yhpw4T9C6hPpgPeA28us07OJeqZ5EzQTkbfwuhsUg0c237RomFoETJgmp2sa3F/41gfLE6G5cqcYwznmeEeOlQ=="
     },
     "picocolors@1.1.1": {
       "integrity": "sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA=="
