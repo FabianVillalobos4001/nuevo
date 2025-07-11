@@ -2,7 +2,7 @@ import { RouterContext } from "../../deps.ts";
 import { Usuario } from "../models/userModel.ts";
 import { compare } from "https://deno.land/x/bcrypt@v0.3.0/mod.ts";
 import { create, getNumericDate } from "https://deno.land/x/djwt@v2.6/mod.ts";
-import db from "../config/db.ts"; // ✅ conexión centralizada
+import { usuarios } from "../config/db.ts"; // ✅ importar colección directamente
 
 const JWT_SECRET = Deno.env.get("JWT_SECRET") || "clave_super_secreta";
 const keyBuf = new TextEncoder().encode(JWT_SECRET);
@@ -13,8 +13,6 @@ const jwtKey = await crypto.subtle.importKey(
   false,
   ["sign", "verify"],
 );
-
-const usuarios = db.collection<Usuario>("usuarios");
 
 export const loginHandler = async (ctx: RouterContext<"/api/login">) => {
   console.log("🟢 Petición recibida en /api/login");
