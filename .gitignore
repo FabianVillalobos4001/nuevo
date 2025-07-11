@@ -24,3 +24,7 @@ dist-ssr
 *.sw?
 
 client/.vite
+
+# Deno lock files (let Railway/Nixpacks generate them)
+deno.lock
+**/deno.lock
