@@ -126,8 +126,10 @@ export async function closeConnection(): Promise<void> {
 }
 
 // Intentar conectar en background (no bloquea el startup)
-connectToMongoDB().catch(() => {
-  console.log("⚠️ MongoDB no disponible al inicio, se intentará conectar cuando sea necesario");
-});
+setTimeout(() => {
+  connectToMongoDB().catch(() => {
+    console.log("⚠️ MongoDB no disponible al inicio, se intentará conectar cuando sea necesario");
+  });
+}, 1000); // Delay de 1 segundo para permitir que el servidor arranque primero
 
 export default { packages, residents, usuarios };

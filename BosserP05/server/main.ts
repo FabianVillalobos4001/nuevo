@@ -55,8 +55,16 @@ router.post("/api/paquetes/validar-codigo", validarCodigoEntrega); // <-- agrega
 // ==== Rutas de health check ====
 // Ruta de health check para Railway
 router.get("/health", (ctx) => {
+  console.log("🏥 Health check solicitado");
   ctx.response.status = 200;
-  ctx.response.body = { status: "OK", timestamp: new Date().toISOString() };
+  ctx.response.headers.set("Content-Type", "application/json");
+  ctx.response.body = { 
+    status: "OK", 
+    timestamp: new Date().toISOString(),
+    port: Deno.env.get("PORT") || "8000",
+    env: Deno.env.get("NODE_ENV") || "development"
+  };
+  console.log("✅ Health check respondido correctamente");
 });
 
 // ==== Servir archivos estáticos (frontend) ====
@@ -76,5 +84,14 @@ setInterval(() => {
 }, 5 * 60 * 1000);
 
 const port = parseInt(Deno.env.get("PORT") || "8000");
-console.log(`Servidor en http://localhost:${port}`);
-await app.listen({ port });
+console.log(`🚀 Iniciando servidor en puerto ${port}`);
+console.log(`🔗 Environment: ${Deno.env.get("NODE_ENV") || "development"}`);
+console.log(`🗂️ Working directory: ${Deno.cwd()}`);
+
+try {
+  console.log(`🎯 Servidor listo en http://localhost:${port}`);
+  await app.listen({ port, hostname: "0.0.0.0" });
+} catch (error) {
+  console.error("❌ Error al iniciar servidor:", error);
+  Deno.exit(1);
+}
