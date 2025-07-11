@@ -1,8 +1,14 @@
+console.log("🔄 Iniciando imports...");
 import { Application, Router, oakCors } from "../deps.ts";
+console.log("✅ Oak imports OK");
 import routeStaticFilesFrom from "./util/routeStaticFilesFrom.ts";
+console.log("✅ Static files util OK");
 import { notificarPrioritarios } from "./util/notificarPrioritarios.ts";
+console.log("✅ Notificaciones util OK");
 import { packages, getDatabase } from "./config/db.ts";
+console.log("✅ Database config OK");
 import { obtenerPaquetesPrioritarios } from "./util/prioridadPaquetes.ts";
+console.log("✅ Prioridad util OK");
 
 // Controladores
 import { handler as verifyResident } from "./api/verify_resident.ts"; // Verifica existencia de residente
@@ -40,7 +46,7 @@ router.put("/api/paquetes/:id/recibido", authMiddleware, marcarPaqueteRecibido);
 // Endpoint para obtener paquetes prioritarios (solo datos, no notifica por email)
 router.get("/api/paquetes/prioritarios", authMiddleware, async (ctx) => {
   try {
-    const paquetesPendientes = await packages.find({ estado: "Pendiente" }).toArray();
+    const paquetesPendientes = await (await packages.find({ estado: "Pendiente" })).toArray();
     const prioritarios = obtenerPaquetesPrioritarios(paquetesPendientes);
     ctx.response.status = 200;
     ctx.response.body = { paquetes: prioritarios };
@@ -126,11 +132,16 @@ const port = parseInt(Deno.env.get("PORT") || "8000");
 console.log(`🚀 Iniciando servidor en puerto ${port}`);
 console.log(`🔗 Environment: ${Deno.env.get("NODE_ENV") || "development"}`);
 console.log(`🗂️ Working directory: ${Deno.cwd()}`);
+console.log(`🌐 MONGODB_URI configured: ${Deno.env.get("MONGODB_URI") ? "YES" : "NO"}`);
 
 try {
-  console.log(`🎯 Servidor listo en http://localhost:${port}`);
+  console.log(`🎯 Intentando escuchar en puerto ${port} con hostname 0.0.0.0`);
   await app.listen({ port, hostname: "0.0.0.0" });
+  console.log(`✅ Servidor exitosamente iniciado en puerto ${port}`);
 } catch (error) {
-  console.error("❌ Error al iniciar servidor:", error);
+  const err = error as Error;
+  console.error(`❌ Error crítico al iniciar servidor en puerto ${port}:`, err.message);
+  console.error(`❌ Stack trace:`, err.stack);
+  console.error(`❌ Error completo:`, err);
   Deno.exit(1);
 }

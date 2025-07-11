@@ -25,5 +25,5 @@ EXPOSE 8000
 # Ejecutar como usuario no-root por seguridad
 USER deno
 
-# Comando para ejecutar el servidor
-CMD ["deno", "run", "-A", "server/main.ts"]
+# Comando para ejecutar el servidor con logs extra
+CMD ["sh", "-c", "echo 'Starting Deno server...' && deno run -A server/main.ts"]
